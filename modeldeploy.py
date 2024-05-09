@@ -7,7 +7,7 @@ import cv2
 import tensorflow as tf
 import time
 
-model = load_model(r"C:\Users\hp\.vscode\Jupyter\NCAIR ML\malaria\my_model2.h5")
+model = load_model("my_model2.h5")
 
 def main():
     st.set_page_config(page_title="Malaria Detector", page_icon="⚕️", layout="centered", initial_sidebar_state="auto")
