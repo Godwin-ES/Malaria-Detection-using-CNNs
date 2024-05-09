@@ -1,6 +1,6 @@
-numpy==1.15.1
-opencv-contrib-python==4.9.0.80
-opencv-python==4.9.0.80
-streamlit==1.34.0
-tensorflow==2.16.1
-tensorflow-intel==2.16.1
+numpy
+opencv-contrib-python
+opencv-python
+streamlit
+tensorflow
+tensorflow-intel
