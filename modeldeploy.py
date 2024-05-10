@@ -1,13 +1,14 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import numpy as np
 from PIL import Image
 import tensorflow as tf
 import time
+import joblib
 
-model = load_model("my_model2.h5")
+# Load the model with the InputLayer
+model = joblib.load('model.pkl')
 
 def main():
     st.set_page_config(page_title="Malaria Detector", page_icon="⚕️", layout="centered", initial_sidebar_state="auto")
