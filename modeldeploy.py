@@ -43,9 +43,12 @@ def main():
             end_time = time.time()
 
         # Determine the result and display prediction confidence
-        prediction = "Infected" if yprob >= 0.5 else "Uninfected"
-        confidence = f"Confidence: {yprob[0][0]:.2f}"
-        st.write(f"Prediction: {prediction} ({confidence})")
+        if yprob >= 0.5:
+            confidence = f"Confidence: {yprob[0][0]:.2f}"
+            st.write(f"Prediction: Infected ({confidence})")
+        else:
+            confidence = f"Confidence: { 1 - yprob[0][0]:.2f}"
+            st.write(f"Prediction: Uninfected ({confidence})")
         
         # Show time taken for analysis
         analysis_time = end_time - start_time
