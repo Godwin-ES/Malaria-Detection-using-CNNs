@@ -1,5 +1,6 @@
+joblib
 numpy
 Pillow
 streamlit
 tensorflow
-tensorflow-intel
+tensorflow_intel
