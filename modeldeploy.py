@@ -31,7 +31,7 @@ def main():
 
         # Preprocess the image (resize, normalize, etc.)
         resized_image = pil_image.resize((128, 128))
-        normalized_image = resized_image.astype('float32') / 255.0
+        normalized_image = np.array(resized_image) / 255.0
         img = np.expand_dims(normalized_image, axis=0)
 
         # Make prediction
