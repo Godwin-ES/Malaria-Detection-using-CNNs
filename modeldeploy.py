@@ -1,13 +1,15 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import numpy as np
-import cv2
+from PIL import Image
 import tensorflow as tf
 import time
+import joblib
 
-model = load_model(r"C:\Users\hp\.vscode\Jupyter\NCAIR ML\malaria\my_model2.h5")
+# Load the models
+classify = joblib.load('classify.pkl')
+model = joblib.load('model.pkl')
 
 def main():
     st.set_page_config(page_title="Malaria Detector", page_icon="⚕️", layout="centered", initial_sidebar_state="auto")
@@ -27,36 +29,46 @@ def main():
         st.image(upload, caption='Uploaded Image.', use_column_width=True)
 
         # Convert the uploaded file to a numpy array
-        file_bytes = np.asarray(bytearray(upload.read()), dtype=np.uint8)
-        opencv_image = cv2.imdecode(file_bytes, 1)
+        pil_image = Image.open(upload)
 
         # Preprocess the image (resize, normalize, etc.)
-        resized_image = cv2.resize(opencv_image, (128, 128))
-        normalized_image = resized_image.astype('float32') / 255.0
+        resized_image = pil_image.resize((128, 128))
+        normalized_image = np.array(resized_image) / 255.0
         img = np.expand_dims(normalized_image, axis=0)
 
-        # Make prediction
-        with st.spinner('Analyzing image...'):
-            start_time = time.time()
-            yout = model.predict(img)
-            yprob = tf.nn.sigmoid(yout).numpy()
-            end_time = time.time()
-
-        # Determine the result and display prediction confidence
-        prediction = "Infected" if yprob >= 0.5 else "Uninfected"
-        confidence = f"Confidence: {yprob[0][0]:.2f}"
-        st.write(f"Prediction: {prediction} ({confidence})")
+        # Make prediction using classify_model to determine if it's a cell image
+        cell_y = classify.predict(img)
+        cell_prob = tf.nn.sigmoid(cell_y).numpy()
         
-        # Show time taken for analysis
-        analysis_time = end_time - start_time
-        st.write(f"Time taken for analysis: {analysis_time:.2f} seconds")
+        # Check if the uploaded image is a cell image
+        if cell_prob >= 0.5:
+            st.write("Uploaded image is a cell image. Analyzing for malaria...")
+            # Make prediction using malaria_model
+            with st.spinner('Analyzing image for malaria...'):
+                start_time = time.time()
+                yout = model.predict(img)
+                yprob = tf.nn.sigmoid(yout).numpy()
+                end_time = time.time()
 
-        # Add a footer with model information
-        st.markdown("Model: Convolutional Neural Network (CNN) trained for Malaria Detection")
-    
+            # Determine the result and display prediction confidence
+            if yprob >= 0.5:
+                confidence = f"Confidence: {yprob[0][0]:.2f}"
+                st.write(f"Prediction: Infected ({confidence})")
+            else:
+                confidence = f"Confidence: {1 - yprob[0][0]:.2f}"
+                st.write(f"Prediction: Uninfected ({confidence})")
+            
+            # Show time taken for analysis
+            analysis_time = end_time - start_time
+            st.write(f"Time taken for analysis: {analysis_time:.2f} seconds")
+
+            # Add a footer with model information
+            st.markdown("Model: Convolutional Neural Network (CNN) trained for Malaria Detection")
+        else:
+            st.error("Uploaded image is not a cell image. Please upload a valid cell image.")
+
     # Keep the Streamlit app running
     st.stop()
-    
-    
+
 if __name__ == '__main__':
     main()
