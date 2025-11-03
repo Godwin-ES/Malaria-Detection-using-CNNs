@@ -29,7 +29,7 @@ def main():
         st.image(upload, caption='Uploaded Image.', use_column_width=True)
 
         # Convert the uploaded file to a numpy array
-        pil_image = Image.open(upload)
+        pil_image = Image.open(upload).convert('RGB')
 
         # Preprocess the image (resize, normalize, etc.)
         resized_image = pil_image.resize((128, 128))
