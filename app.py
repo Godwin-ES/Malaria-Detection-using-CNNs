@@ -61,9 +61,6 @@ def main():
             # Show time taken for analysis
             analysis_time = end_time - start_time
             st.write(f"Time taken for analysis: {analysis_time:.2f} seconds")
-
-            # Add a footer with model information
-            st.markdown("Model: Convolutional Neural Network (CNN) trained for Malaria Detection")
         else:
             st.error("Uploaded image is not a cell image. Please upload a valid cell image.")
 
